@@ -6,11 +6,10 @@ export function generateColors(n) {
   ];
   if (n <= palette.length) return palette.slice(0, n);
   const colors = [...palette];
+  // Use deterministic HSL-based generation for indices beyond the palette
   while (colors.length < n) {
-    const r = Math.floor(Math.random() * 200 + 55);
-    const g = Math.floor(Math.random() * 200 + 55);
-    const b = Math.floor(Math.random() * 200 + 55);
-    colors.push(`rgb(${r},${g},${b})`);
+    const hue = Math.round((colors.length * 137.508) % 360); // golden-angle distribution
+    colors.push(`hsl(${hue},65%,55%)`);
   }
   return colors;
 }
