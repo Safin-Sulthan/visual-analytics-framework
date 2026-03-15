@@ -1,0 +1,115 @@
+version: '3.9'
+
+services:
+  # ─── Frontend ───────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: vaf-frontend
+    ports:
+      - '3000:80'
+    environment:
+      - VITE_API_BASE_URL=http://localhost:5000
+      - VITE_AI_ENGINE_URL=http://localhost:8000
+    depends_on:
+      - backend
+    networks:
+      - vaf-network
+
+  # ─── Backend ────────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: vaf-backend
+    ports:
+      - '5000:5000'
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - MONGO_URI=${MONGO_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - AI_ENGINE_URL=http://ai-engine:8000
+    volumes:
+      - uploads-data:/app/uploads
+    depends_on:
+      - mongodb
+      - redis
+    networks:
+      - vaf-network
+
+  # ─── AI Engine ──────────────────────────────────────────────────────────────
+  ai-engine:
+    build:
+      context: ./ai-engine
+      dockerfile: Dockerfile
+    container_name: vaf-ai-engine
+    ports:
+      - '8000:8000'
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - UPLOADS_DIR=/app/uploads
+    volumes:
+      - uploads-data:/app/uploads
+    depends_on:
+      - redis
+    networks:
+      - vaf-network
+
+  # ─── Redis Worker ───────────────────────────────────────────────────────────
+  redis-worker:
+    build:
+      context: ./redis-worker
+      dockerfile: Dockerfile
+    container_name: vaf-redis-worker
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - BACKEND_URL=http://backend:5000
+      - AI_ENGINE_URL=http://ai-engine:8000
+    depends_on:
+      - redis
+      - backend
+      - ai-engine
+    networks:
+      - vaf-network
+
+  # ─── Redis ──────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: vaf-redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+    command: redis-server --save 60 1 --loglevel warning
+    networks:
+      - vaf-network
+
+  # ─── MongoDB (local dev only — use Atlas in production) ─────────────────────
+  mongodb:
+    image: mongo:7
+    container_name: vaf-mongodb
+    ports:
+      - '27017:27017'
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER:-admin}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD:-changeme}
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - vaf-network
+
+volumes:
+  uploads-data:
+  redis-data:
+  mongo-data:
+
+networks:
+  vaf-network:
+    driver: bridge
