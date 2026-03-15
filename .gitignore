@@ -11,9 +11,9 @@ __pycache__/
 dist/
 build/
 
-# Environment files
-.env
-*/.env
+# Environment files — only ignore local overrides, not the base .env files
+*.env.local
+*.env.*.local
 
 # Uploads and reports (runtime)
 backend/uploads/*
