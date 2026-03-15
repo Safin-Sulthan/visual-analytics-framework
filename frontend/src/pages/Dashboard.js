@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import SummaryCard from '../components/SummaryCard';
-import InsightCard from '../components/InsightCard';
-import AlertBanner from '../components/AlertBanner';
+import InsightPanel from '../components/InsightPanel';
+import AlertPanel from '../components/AlertPanel';
 import LoadingSpinner from '../components/LoadingSpinner';
 import LineChartComponent from '../charts/LineChartComponent';
 import PieChartComponent from '../charts/PieChartComponent';
@@ -11,7 +11,7 @@ import { Database, Lightbulb, AlertTriangle, CheckCircle } from 'lucide-react';
 import { formatDate } from '../utils/formatters';
 
 function Dashboard() {
-  const { datasets, insights, alerts, fetchDatasets, fetchInsights, fetchAlerts, datasetsLoading } = useData();
+  const { datasets, insights, alerts, fetchDatasets, fetchInsights, fetchAlerts, datasetsLoading, insightsLoading } = useData();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -107,45 +107,19 @@ function Dashboard() {
 
         {/* Two column: insights + alerts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Insights panel */}
-          <div className="bg-slate-800 border border-slate-700 rounded-xl p-5">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base font-semibold text-white">Top Insights</h2>
-              <a href="/insights" className="text-xs text-blue-400 hover:text-blue-300">View all →</a>
-            </div>
-            {topInsights.length > 0 ? (
-              <div className="space-y-3">
-                {topInsights.map((insight, i) => (
-                  <InsightCard key={insight.id || i} insight={insight} />
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-40 text-slate-500">
-                <Lightbulb className="w-10 h-10 mb-2 opacity-40" />
-                <p className="text-sm">No insights yet. Upload a dataset to get started.</p>
-              </div>
-            )}
-          </div>
-
-          {/* Alerts panel */}
-          <div className="bg-slate-800 border border-slate-700 rounded-xl p-5">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base font-semibold text-white">Recent Alerts</h2>
-              <a href="/monitoring" className="text-xs text-blue-400 hover:text-blue-300">View all →</a>
-            </div>
-            {activeAlerts.length > 0 ? (
-              <div className="space-y-2">
-                {activeAlerts.slice(0, 5).map((alert, i) => (
-                  <AlertBanner key={alert.id || i} alert={alert} />
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-40 text-slate-500">
-                <CheckCircle className="w-10 h-10 mb-2 opacity-40" />
-                <p className="text-sm">No active alerts. All systems normal.</p>
-              </div>
-            )}
-          </div>
+          <InsightPanel
+            insights={topInsights}
+            loading={insightsLoading}
+            title="Top Insights"
+            viewAllHref="/insights"
+            limit={4}
+          />
+          <AlertPanel
+            alerts={activeAlerts}
+            title="Recent Alerts"
+            viewAllHref="/monitoring"
+            limit={5}
+          />
         </div>
 
         {/* Distribution charts */}
