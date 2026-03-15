@@ -379,10 +379,6 @@ async function main() {
   const worker = new Worker(QUEUE_NAME, processJob, {
     connection: redisConnection,
     concurrency: Number(process.env.WORKER_CONCURRENCY) || 2,
-    settings: {
-      backoffStrategy: (attemptsMade) =>
-        Math.min(attemptsMade * RETRY_DELAY_MS, 30000),
-    },
     defaultJobOptions: {
       attempts: MAX_JOB_RETRIES,
       backoff: { type: 'exponential', delay: RETRY_DELAY_MS },
