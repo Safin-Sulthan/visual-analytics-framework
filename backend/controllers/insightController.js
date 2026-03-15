@@ -1,11 +1,7 @@
 const Insight = require('../models/Insight');
 const Dataset = require('../models/Dataset');
 const { success, error } = require('../utils/responseHelper');
-<<<<<<< HEAD
-
-=======
 const { getTopInsights } = require('../services/insightRankingService');
->>>>>>> copilot-pr-5
 
 const list = async (req, res) => {
   try {
@@ -84,9 +80,6 @@ const dismiss = async (req, res) => {
   }
 };
 
-<<<<<<< HEAD
-module.exports = { list, getById, dismiss };
-=======
 const getTop = async (req, res) => {
   try {
     const { datasetId } = req.query;
@@ -110,4 +103,3 @@ const getTop = async (req, res) => {
 };
 
 module.exports = { list, getById, dismiss, getTop };
->>>>>>> copilot-pr-5
