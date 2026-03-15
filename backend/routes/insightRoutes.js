@@ -6,10 +6,7 @@ const router = express.Router();
 
 router.use(protect);
 
-<<<<<<< HEAD
-=======
 router.get('/top', getTop);
->>>>>>> copilot-pr-5
 router.get('/dataset/:datasetId', list);
 router.get('/:id', getById);
 router.patch('/:id/dismiss', dismiss);
