@@ -1,2 +1,50 @@
-frontend/node_modules
-frontend/dist
+# Root-level .gitignore
+.env
+.env.local
+.env.*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Node dependencies
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+redis-worker/node_modules/
+
+# Build artifacts
+dist/
+build/
+frontend/dist/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+venv/
+.venv/
+*.egg-info/
+
+# Uploads (user data — do not commit)
+uploads/
+backend/uploads/
+ai-engine/uploads/
+
+# Test coverage
+coverage/
+.nyc_output/
+htmlcov/

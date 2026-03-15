@@ -33,7 +33,7 @@ def run_temporal_analysis(file_path: str, date_col: Optional[str] = None) -> dic
     numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
 
     aggregations = {}
-    for freq, label in [("D", "daily"), ("W", "weekly"), ("ME", "monthly")]:
+    for freq, label in [("D", "daily"), ("W", "weekly"), ("MS", "monthly")]:
         agg = df.set_index(date_col)[numeric_cols].resample(freq).mean().reset_index()
         aggregations[label] = {
             "dates": agg[date_col].dt.strftime("%Y-%m-%d").tolist(),
