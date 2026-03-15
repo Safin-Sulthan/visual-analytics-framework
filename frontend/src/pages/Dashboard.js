@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import SummaryCard from '../components/SummaryCard';
+<<<<<<< HEAD
 import InsightCard from '../components/InsightCard';
 import AlertBanner from '../components/AlertBanner';
+=======
+import InsightPanel from '../components/InsightPanel';
+import AlertPanel from '../components/AlertPanel';
+>>>>>>> copilot-pr-5
 import LoadingSpinner from '../components/LoadingSpinner';
 import LineChartComponent from '../charts/LineChartComponent';
 import PieChartComponent from '../charts/PieChartComponent';
@@ -11,7 +16,11 @@ import { Database, Lightbulb, AlertTriangle, CheckCircle } from 'lucide-react';
 import { formatDate } from '../utils/formatters';
 
 function Dashboard() {
+<<<<<<< HEAD
   const { datasets, insights, alerts, fetchDatasets, fetchInsights, fetchAlerts, datasetsLoading } = useData();
+=======
+  const { datasets, insights, alerts, fetchDatasets, fetchInsights, fetchAlerts, datasetsLoading, insightsLoading } = useData();
+>>>>>>> copilot-pr-5
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -107,6 +116,7 @@ function Dashboard() {
 
         {/* Two column: insights + alerts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<<<<<<< HEAD
           {/* Insights panel */}
           <div className="bg-slate-800 border border-slate-700 rounded-xl p-5">
             <div className="flex items-center justify-between mb-4">
@@ -146,6 +156,21 @@ function Dashboard() {
               </div>
             )}
           </div>
+=======
+          <InsightPanel
+            insights={topInsights}
+            loading={insightsLoading}
+            title="Top Insights"
+            viewAllHref="/insights"
+            limit={4}
+          />
+          <AlertPanel
+            alerts={activeAlerts}
+            title="Recent Alerts"
+            viewAllHref="/monitoring"
+            limit={5}
+          />
+>>>>>>> copilot-pr-5
         </div>
 
         {/* Distribution charts */}

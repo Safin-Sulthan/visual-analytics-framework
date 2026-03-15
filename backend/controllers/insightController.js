@@ -1,6 +1,11 @@
 const Insight = require('../models/Insight');
 const Dataset = require('../models/Dataset');
 const { success, error } = require('../utils/responseHelper');
+<<<<<<< HEAD
+
+=======
+const { getTopInsights } = require('../services/insightRankingService');
+>>>>>>> copilot-pr-5
 
 const list = async (req, res) => {
   try {
@@ -79,4 +84,30 @@ const dismiss = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 module.exports = { list, getById, dismiss };
+=======
+const getTop = async (req, res) => {
+  try {
+    const { datasetId } = req.query;
+    const limit = parseInt(req.query.limit, 10) || 5;
+
+    if (datasetId) {
+      const dataset = await Dataset.findOne({
+        _id: datasetId,
+        uploadedBy: req.user.id,
+      });
+      if (!dataset) {
+        return error(res, 'Dataset not found', 404);
+      }
+    }
+
+    const insights = await getTopInsights(datasetId || null, limit);
+    return success(res, { insights, total: insights.length });
+  } catch (err) {
+    return error(res, err.message, 500);
+  }
+};
+
+module.exports = { list, getById, dismiss, getTop };
+>>>>>>> copilot-pr-5
