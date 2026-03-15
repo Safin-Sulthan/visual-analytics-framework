@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - analytics-net
+
+  ai-engine:
+    build: ./ai-engine
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    networks:
+      - analytics-net
+
+  redis-worker:
+    build: ./redis-worker
+    env_file:
+      - .env
+    depends_on:
+      - backend
+      - ai-engine
+      - mongo
+      - redis
+    networks:
+      - analytics-net
+
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - analytics-net
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - analytics-net
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    env_file:
+      - .env
+    depends_on:
+      - backend
+    networks:
+      - analytics-net
+
+volumes:
+  mongo-data:
+  redis-data:
+
+networks:
+  analytics-net:
+    driver: bridge

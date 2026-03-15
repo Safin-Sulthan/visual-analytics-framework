@@ -1,1 +1,42 @@
-**/__pycache__/
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Build outputs
+frontend/build/
+*.pyc
+__pycache__/
+*.egg-info/
+dist/
+build/
+
+# Environment files
+.env
+*/.env
+
+# Uploads and reports (runtime)
+backend/uploads/*
+!backend/uploads/.gitkeep
+backend/reports/*
+!backend/reports/.gitkeep
+
+# Python virtual env
+venv/
+.venv/
+*.venv
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Redis dump
+dump.rdb
