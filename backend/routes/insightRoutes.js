@@ -1,9 +1,5 @@
 const express = require('express');
-<<<<<<< HEAD
-const { list, getById, dismiss } = require('../controllers/insightController');
-=======
 const { list, getById, dismiss, getTop } = require('../controllers/insightController');
->>>>>>> copilot-pr-5
 const { protect } = require('../middlewares/authMiddleware');
 
 const router = express.Router();
