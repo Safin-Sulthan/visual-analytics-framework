@@ -1,0 +1,95 @@
+version: "3.9"
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: vaf-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: adminpassword
+      MONGO_INITDB_DATABASE: visual-analytics
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - vaf-network
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: vaf-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - vaf-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: vaf-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+      MONGODB_URI: mongodb://admin:adminpassword@mongodb:27017/visual-analytics?authSource=admin
+      JWT_SECRET: change_this_secret_in_production
+      REDIS_URL: redis://redis:6379
+      AI_ENGINE_URL: http://ai-engine:8000
+      UPLOAD_DIR: /app/uploads
+      FRONTEND_URL: http://localhost:3000
+      NODE_ENV: production
+    depends_on:
+      - mongodb
+      - redis
+    volumes:
+      - uploads_data:/app/uploads
+    networks:
+      - vaf-network
+
+  ai-engine:
+    build:
+      context: ./ai-engine
+      dockerfile: Dockerfile
+    container_name: vaf-ai-engine
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      HOST: 0.0.0.0
+      PORT: 8000
+      BACKEND_URL: http://backend:5000
+    volumes:
+      - uploads_data:/app/uploads
+    networks:
+      - vaf-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: vaf-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    environment:
+      REACT_APP_API_URL: http://localhost:5000/api
+      REACT_APP_AI_ENGINE_URL: http://localhost:8000
+    depends_on:
+      - backend
+    networks:
+      - vaf-network
+
+volumes:
+  mongodb_data:
+  redis_data:
+  uploads_data:
+
+networks:
+  vaf-network:
+    driver: bridge
